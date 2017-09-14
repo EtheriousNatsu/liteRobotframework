@@ -2,6 +2,8 @@
 fsfsfsd
 """
 
+from robot import utils
+
 
 class _Converter(object):
     """ this is a test """
@@ -119,5 +121,59 @@ class _Verify(object):
         return msg
 
 
-class BuiltIn(_Converter, _Verify):
+class _Misc():
+    """"""
+
+    def sleep(self, time):
+        """"""
+
+    def evaluate(self, expression):
+        """Evaluates the given expression in Python and returns the results.
+
+                Examples (expecting ${RC} is -1):
+                | ${status} = | Evaluate | 0 < ${RC} < 10          |
+                | ${dict} =   | Evaluate | { 'a':1, 'b':2, 'c':3 } |
+                =>
+                ${status} = False
+                ${dict} = { 'a':1, 'b':2, 'c':3 }
+        """
+        try:
+            return eval(expression)
+        except:
+            raise
+
+    def catenate(self, *items):
+        """Catenates the given items together and returns the resulted string.
+
+        By default, items are catenated with spaces, but if the first item
+        contains the string 'SEPARATOR=<sep>', the separator '<sep>' is used.
+        Items are converted into strings when necessary.
+
+        Examples:
+        | ${str1} = | Catenate | Hello       | world  |        |
+        | ${str2} = | Catenate | SEPARATOR=- | Hello  | world  |
+        | ${str3} = | Catenate | SEPARATOR=  | Hello  | world  |
+        =>
+        ${str1} = 'Hello world'
+        ${str2} = 'Hello-world'
+        ${str3} = 'Helloworld'
+        """
+        if len(items) == 0:
+            return u''
+        if items[0].startswith('SEPARATOR='):
+            sep = items[0][len('SEPARATOR='):]
+            items = items[1:]
+        else:
+            sep = u' '
+        return sep.join(items)
+
+    def log(self, message, level="INFO"):
+        print '*%s* %s' % (level, message)
+
+    def log_many(self, *messages):
+        for message in messages:
+            self.log(message)
+
+
+class BuiltIn(_Converter, _Verify, _Misc):
     pass

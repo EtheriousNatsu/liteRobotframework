@@ -35,7 +35,7 @@ class TestBuiltIn(unittest.TestCase):
     def test_create_list(self):
         assert isinstance(self.builtIn.create_list(0, 1, 2), list)
         assert isinstance(self.builtIn.create_list([1, 2, 3]), list)
-        assert isinstance(self.builtIn.create_list({'a':1, 'b':2}), list)
+        assert isinstance(self.builtIn.create_list({'a': 1, 'b': 2}), list)
 
     def test_get_length(self):
         assert self.builtIn.get_length(_User1()) == 10
@@ -59,3 +59,9 @@ class TestBuiltIn(unittest.TestCase):
 
     def test_should_be_true_fail(self):
         self.builtIn.should_be_true('1 > 2')
+
+    def test_evaluate(self):
+        assert self.builtIn.evaluate('1>0') is True
+
+    def test_log(self):
+        self.builtIn.log('i am log')
