@@ -17,19 +17,18 @@ class AbstractLogger:
     """"""
 
     def __init__(self, level):
-        self.level = level
+        self.set_level(level)
 
     def _is_logged(self, msg_level_str):
         msg_level = get_level(msg_level_str)
-        threshold_level_str = get_level(self.level)
-        return msg_level >= threshold_level_str
+        return msg_level >= self.level
 
     def set_level(self, level_str):
         self.level = get_level(level_str)
 
     def write(self, msg='', level='INFO'):
         if self._is_logged(level):
-            self._write(msg)
+            self._write(Message(msg, level))
 
     def _write(self, msg):
         raise NotImplementedError
