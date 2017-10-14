@@ -22,6 +22,14 @@ class Output(AbstractLogger):
         self.syslog = SystemLogger(monitor=self.monitor)
         self.listeners = Listeners(settings['Listeners'], self.syslog)
 
+
+    def start_keyword(self, wd):
+        pass
+
+
+    def end_keyword(self, kw):
+        pass
+
     def start_suite(self, suite):
         self.monitor.start_suite(suite)
         self.listeners.start_suite(suite)

@@ -50,24 +50,18 @@ class SystemLogger(AbstractLogger):
 
 class _FileLogger(AbstractLogger):
     def __init__(self, path, level):
-        AbstractLogger.__init__(level)
-        self._write = self._get_write(path)
+        AbstractLogger.__init__(self, level)
+        self._writer = self._get_writer(path)
 
-    def _get_write(self, path):
+    def _get_writer(self, path):
+        # Hook for unittests
         return open(path, 'wb')
 
     def _write(self, message):
         entry = '%s | %s | %s\n' % (message.timestamp, message.level.ljust(5),
                                     message.message)
-        self._write.write(entry)
+        self._writer.write(entry)
 
     def close(self):
-        self._write.close()
+        self._writer.close()
 
-
-if __name__ == '__main__':
-    syslog = SystemLogger()
-    syslog.warn("Running test suite 'Testcase Template'")
-    syslog.info('!!')
-    syslog.set_level("INFO")
-    syslog.info('!!')
