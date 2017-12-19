@@ -8,34 +8,23 @@
 @time: 2017/9/16 下午5:21
 @contact: zhouqiang847@gmail.com
 """
-import os, sys
+import os
+import sys
 
 
 def _split_path_to_module(path):
+    """返回目录名及文件名(不包含后缀)"""
     moddir, modfile = os.path.split(path)
     modname = os.path.splitext(modfile)[0]
     return moddir, modname
 
+
 def import_(name, type_='test library'):
-    """Imports Python class/module or Java class with given name.
-
-        'name' can also be a path to the library and in that case the directory
-        containing the lib is automatically put into sys.path and removed there
-        afterwards.
-
-        'type_' is used in error message if importing fails.
-
-        Class can either live in a module/package or be 'standalone'. In the former
-        case tha name is something like 'MyClass' and in the latter it could be
-        'your.package.YourLibrary'). Python classes always live in a module but if
-        the module name is exactly same as the class name the former also works in
-        Python.
-
-        Example: If you have a Python class 'MyLibrary' in a module 'mymodule'
-        it must be imported with name 'mymodule.MyLibrary'. If the name of
-        the module is also 'MyLibrary' then it is possible to use only
-        name 'MyLibrary'.
-        """
+    """
+        1、 如果类名和模块名不同，则需要写成: myModule.myClass, 然后会在sys.path下找模块 myModule, 然后在 myModule 中找类 myClass。
+        2、 如果类名和模块名相同，可以只提供类名 myClass。然后会在sys.path下找模块 myClass, 然后在 myClass 中找类 myClass。
+        3、 如果 `name` 是一个包含模块的路径， 则首先把路径插入到 sys.path 中，然后按2走，导入成功后把路径从 sys.path 中删除。
+    """
     if os.path.exists(name):
         moddir, name = _split_path_to_module(name)
         sys.path.insert(0, moddir)
@@ -56,7 +45,7 @@ def import_(name, type_='test library'):
     except:
         if pop_sys_path:
             sys.path.pop(0)
-        # _raise_import_failed(type_, name)
+            # _raise_import_failed(type_, name)
     if pop_sys_path:
         sys.path.pop(0)
     try:

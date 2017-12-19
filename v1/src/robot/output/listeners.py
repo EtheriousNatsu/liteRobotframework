@@ -11,6 +11,7 @@
 
 from robot import utils
 
+
 class Listeners:
     def __init__(self, names, syslog):
         self._listeners = []
@@ -21,24 +22,29 @@ class Listeners:
                 syslog.error("Listeners error")
 
     def start_suite(self, suite):
+        """测试套件开始前遍历 _listeners 里所有 listener实例执行start_suite()"""
         for listener in self._listeners:
             listener.start_suite(suite.name, suite.doc)
 
     def end_suite(self, suite):
+        """测试套件结束后遍历 _listeners 里所有 listener实例执行end_suite()"""
         for listener in self._listeners:
             listener.end_suite(suite.status, suite.get_full_message())
 
     def start_test(self, test):
+        """测试用例开始前遍历 _listeners 里所有 listener实例执行start_test()"""
         for listener in self._listeners:
             listener.start_test(test.name, test.doc, test.tags)
 
     def end_test(self, test):
+        """测试结束后遍历 _listeners 里所有 listener实例执行end_test()"""
         for listener in self._listeners:
             listener.end_test(test.status, test.message)
 
 
 class _Listener():
     def __init__(self, listener_name, syslog):
+        """"""
         self._handlers = {}
         listener_class = utils.import_(listener_name, 'listener')
         listener = listener_class()

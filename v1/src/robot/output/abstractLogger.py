@@ -9,7 +9,7 @@
 @contact: zhouqiang847@gmail.com
 """
 
-from levels import get_level
+from levels import get_level, LEVELS
 from robot import utils
 
 
@@ -24,7 +24,18 @@ class AbstractLogger:
         return msg_level >= self.level
 
     def set_level(self, level_str):
+        old = self._get_old_level()
         self.level = get_level(level_str)
+        return old
+
+    def _get_old_level(self):
+        try:
+            old_int = self.level
+        except AttributeError:
+            return None
+        for level, int_value in LEVELS.items():
+            if int_value == old_int:
+                return level
 
     def write(self, msg='', level='INFO'):
         if self._is_logged(level):
