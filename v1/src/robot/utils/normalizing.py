@@ -20,6 +20,7 @@ else:
     except:
         _CASE_INSENSITIVE_FILESYSTEM = False
 
+
 def normpath(path, normcase=True):
     """Returns path in normalized and absolute format.
 
@@ -34,6 +35,7 @@ def normpath(path, normcase=True):
     # if os.sep == '\\' and len(path) == 2 and path[1] == ':':
     #     path += '\\'
     return path
+
 
 class NormalizedDict(UserDict):
     def __init__(self, initial={}, ignore=[], caseless=True, spaceless=True):
@@ -52,11 +54,15 @@ class NormalizedDict(UserDict):
 
 
 def normalize(string, ignore=[], caseless=True, spaceless=True):
+    """根据给定的规范规范string
+       默认情况下，字符串变小写，所有空格被删除，
+       在ignore列表中的多余字符会被删除。
+    """
     if spaceless:
         string = _WHITESPACE_REGEXP.sub('', string)
     if caseless:
         string = string.lower()
-        ignore = [ ign.lower() for ign in ignore ]
+        ignore = [ign.lower() for ign in ignore]
     for ign in ignore:
         string = string.replace(ign, '')
     return string
