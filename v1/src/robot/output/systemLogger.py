@@ -13,34 +13,35 @@ from monitor import CommandLineMonitor
 
 
 class SystemLogger(AbstractLogger):
-    """"""
+    """系统日志类"""
 
     def __init__(self, settings=None, monitor=None):
-        AbstractLogger.__init__(self, "WARN")
+        AbstractLogger.__init__(self, "INFO")
+        self.listeners = None
         if monitor is None:
             self.monitor = CommandLineMonitor()
         else:
             self.monitor = monitor
-            # try:
-            #     self._file_logger = self._get_file_logger(settings['SyslogFile'],
-            #                                               settings['SyslogLevel'])
-            # except:
-            #     self._file_logger = None
-            #     self.error("Opening syslog file '%s' failed"
-            #                % settings['SyslogFile'])
-
-    def write(self, msg='', level='INFO'):
-        # if self._file_logger is not None:
-        #     self._file_logger.write(msg, level)
-        AbstractLogger.write(self, msg, level)
-
-    def _write(self, message):
-        self.monitor.error_message(message.message, message.level)
+            try:
+                self._file_logger = self._get_file_logger("./syslog.txt",
+                                                          "WARN")
+            except:
+                self._file_logger = None
+                self.error("Opening syslog file '%s' failed"
+                           % "./syslog.txt")
 
     def _get_file_logger(self, path, level):
         if path == 'NONE':
             return None
         return _FileLogger(path, level)
+
+    def write(self, msg='', level='INFO'):
+        if self._file_logger is not None:
+            self._file_logger.write(msg, level)
+        AbstractLogger.write(self, msg, level)
+
+    def _write(self, message):
+        self.monitor.error_message(message.message, message.level)
 
     def close(self):
         if self._file_logger is not None:
@@ -49,6 +50,8 @@ class SystemLogger(AbstractLogger):
 
 
 class _FileLogger(AbstractLogger):
+    """文件日志类"""
+
     def __init__(self, path, level):
         AbstractLogger.__init__(self, level)
         self._writer = self._get_writer(path)
@@ -64,4 +67,3 @@ class _FileLogger(AbstractLogger):
 
     def close(self):
         self._writer.close()
-

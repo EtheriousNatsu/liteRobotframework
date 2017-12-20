@@ -9,29 +9,32 @@
 @contact: zhouqiang847@gmail.com
 """
 
+
 def fail(msg=None):
-    """Fail test immediately with the given message."""
+    """把测试用例标记为Fail"""
     _report_failure(msg)
 
 
 def error(msg=None):
-    """Error test immediately with the given message."""
+    """把测试用例标记为Error"""
     _report_error(msg)
 
+
 def fail_if(expr, msg=None):
-    """Fail the test if the expression is True."""
+    """如果expr为True，把测试用例标记为Fail"""
     if expr:
         _report_failure(msg)
 
 
 def fail_unless(expr, msg=None):
-    """Fail the test unless the expression is True."""
+    """如果expr为False，把测试用例标记为Fail"""
     if not expr:
         _report_failure(msg)
 
+
 def fail_if_none(obj, msg=None, values=True):
-    """Fail the test if given object is None."""
-    _msg= 'is None'
+    """如果obj为None，把测试用例标记为Fail"""
+    _msg = 'is None'
     if obj is None:
         if msg is None:
             msg = _msg
@@ -39,8 +42,9 @@ def fail_if_none(obj, msg=None, values=True):
             msg = '%s: %s' % (msg, _msg)
         _report_failure(msg)
 
+
 def fail_unless_none(obj, msg=None, values=True):
-    """Fail the test if given object is not None."""
+    """如果obj不为None，把测试用例标记为Fail"""
     _msg = '%r is not None' % obj
     if obj is not None:
         if msg is None:
@@ -49,14 +53,9 @@ def fail_unless_none(obj, msg=None, values=True):
             msg = '%s: %s' % (msg, _msg)
         _report_failure(msg)
 
-def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
-    """Fail unless an exception of class exc_class is thrown by callable_obj.
 
-        callable_obj is invoked with arguments args and keyword arguments
-        kwargs. If a different type of exception is thrown, it will not be
-        caught, and the test case will be deemed to have suffered an
-        error, exactly as for an unexpected exception.
-    """
+def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
+    """除非callable_obj()抛出exc_class异常，否则把测试用例标记为Fail。"""
     try:
         callable_obj(*args, **kwargs)
     except exc_class:
@@ -71,13 +70,13 @@ def fail_unless_raises(exc_class, callable_obj, *args, **kwargs):
 
 def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
                                 **kwargs):
-    """Similar to fail_unless_raises but also checks the exception message."""
+    """如果callable_obj()抛出的异常消息与expected_msg不一致，则把测试用例标记为Fail"""
     try:
         callable_obj(*args, **kwargs)
     except exc_class, err:
         assert_equal(expected_msg, str(err), 'Correct exception but wrong message')
     else:
-        if hasattr(exc_class,'__name__'):
+        if hasattr(exc_class, '__name__'):
             exc_name = exc_class.__name__
         else:
             exc_name = str(exc_class)
@@ -85,13 +84,13 @@ def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
 
 
 def fail_unless_equal(first, second, msg=None, values=True):
-    """Fail if given objects are unequal as determined by the '==' operator."""
+    """如果first不等于second，则把测试用例标记为Fail"""
     if not first == second:
         _report_unequality_failure(first, second, msg, values, '!=')
 
 
 def fail_if_equal(first, second, msg=None, values=True):
-    """Fail if given objects are equal as determined by the '==' operator."""
+    """如果first等于second，则把测试用例标记为Fail"""
     if first == second:
         _report_unequality_failure(first, second, msg, values, '==')
 
@@ -125,17 +124,21 @@ assert_not_none = fail_if_none
 # Helpers
 
 def _report_failure(msg):
+    """抛出断言失败异常"""
     if msg is None:
         raise AssertionError()
     raise AssertionError(msg)
 
 
 def _report_error(msg):
+    """抛出异常"""
     if msg is None:
         raise Exception()
     raise Exception(msg)
 
+
 def _report_unequality_failure(obj1, obj2, msg, values, delim, extra=None):
+    """修饰异常信息，并抛出AssertionError"""
     if msg is None:
         msg = '%s %s %s' % (obj1, delim, obj2)
     elif values is True:

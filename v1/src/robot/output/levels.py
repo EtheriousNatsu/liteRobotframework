@@ -8,7 +8,7 @@
 @time: 2017/9/15 上午12:43
 @contact: zhouqiang847@gmail.com
 """
-
+# 日志级别字典， NONE > ERROR > FAIL > WARN > DEBUG > TRACE
 LEVELS = {
     "NONE": 100,
     "ERROR": 60,

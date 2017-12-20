@@ -14,7 +14,7 @@ from robot import utils
 
 
 class AbstractLogger:
-    """"""
+    """日志基类"""
 
     def __init__(self, level):
         self.set_level(level)

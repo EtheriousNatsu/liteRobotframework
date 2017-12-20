@@ -13,6 +13,7 @@ from robot import utils
 
 
 class Listeners:
+    """给外部使用的监听器类"""
     def __init__(self, names, syslog):
         self._listeners = []
         for name in names:
@@ -42,9 +43,12 @@ class Listeners:
             listener.end_test(test.status, test.message)
 
 
-class _Listener():
+class _Listener:
+    """每一个_Listener对应一个监听器类"""
     def __init__(self, listener_name, syslog):
-        """"""
+        """导入listener类，初始化listener类，读取listener类，
+        并初始化多个_Handler存放到_handlers中。
+        """
         self._handlers = {}
         listener_class = utils.import_(listener_name, 'listener')
         listener = listener_class()
@@ -61,6 +65,7 @@ class _Listener():
 
 
 class _Handler:
+    """每一个_Handler对应一种操作，如start_suite/end_suite"""
     def __init__(self, listener, listener_name, name, syslog):
         self._handler, self._name = self._get_handler(listener, name)
         self._listener_name = listener_name

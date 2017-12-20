@@ -11,14 +11,12 @@
 
 import unittest
 from robot.output.abstractLogger import AbstractLogger
-import Selenium2Library
+
 
 class TestAbstractLogger(unittest.TestCase):
-
     def test_set_threshold_invalid(self):
         logger = AbstractLogger('trace')
         self.assertRaises(Exception, logger.set_level, 'INVALID THRESHOLD')
-
 
     def test_getattr_with_invalid(self):
         logger = AbstractLogger('trace')

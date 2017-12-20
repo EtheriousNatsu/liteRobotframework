@@ -99,7 +99,7 @@ class CommandLineMonitor:
         stream.flush()
 
     def error_message(self, message, level):
-        """向stderr打印错误信息"""
+        """向stderr打印错误信息，给systemLogger使用"""
         message = '[ %s ] %s' % (level, message)
         self._write(message, stream=sys.stderr)
 

@@ -16,21 +16,17 @@ from listeners import Listeners
 
 
 class Output(AbstractLogger):
+    """"""
+
     def __init__(self, settings):
-        AbstractLogger.__init__(self, "INFO")
+        AbstractLogger.__init__(self, "WARN")
         self.monitor = CommandLineMonitor()
-        self.syslog = SystemLogger(monitor=self.monitor)
+        self.syslog = SystemLogger(settings, self.monitor)
         self.listeners = Listeners(settings['Listeners'], self.syslog)
-
-
-    def start_keyword(self, wd):
-        pass
-
-
-    def end_keyword(self, kw):
-        pass
+        self._settings = settings
 
     def start_suite(self, suite):
+        self.syslog.info("Running test suite '%s'" % suite.longname)
         self.monitor.start_suite(suite)
         self.listeners.start_suite(suite)
 
@@ -39,6 +35,7 @@ class Output(AbstractLogger):
         self.listeners.end_suite(suite)
 
     def start_test(self, test):
+        self.syslog.info("Running test case '%s'" % test.name)
         self.monitor.start_test(test)
         self.listeners.start_test(test)
 
@@ -57,8 +54,8 @@ class _Suite():
         self.status = 'pass'
 
     def get_full_message(self):
-        return "4 critical tests, 2 passed, 2 failed \n" \
-               "4 tests total, 2 passed, 2 failed"
+        return "1 critical tests, 1 passed, 0 failed \n" \
+               "1 tests total, 1 passed, 0 failed"
 
 
 class _Test():
