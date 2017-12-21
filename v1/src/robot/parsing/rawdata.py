@@ -137,7 +137,11 @@ class TabularRawData(_BaseRawData):
             self._table.add_row(self._process_cells(cells))
 
     def _process_cells(self, cells):
-        """"""
+        """去掉cells中类似u''的元素，如下
+            [u'Documentation', u'A', u'', u'', u'', u'', u'', u'']
+            →
+            [u'Documentation', u'A']
+        """
         temp = []
         for cell in cells:
             cell = self._process_cell(cell)

@@ -9,8 +9,12 @@
 @contact: zhouqiang847@gmail.com
 """
 
+from robot.errors import DataError
+
 
 class _Table:
+    """table基类"""
+
     def __init__(self, name, source, data, syslog):
         self._name = name
         self.source = source
@@ -18,59 +22,56 @@ class _Table:
         self._syslog = syslog
 
     def add_row(self, cells):
+        """添加行数据，底层由子类实现"""
         if len(cells) == 0:
             return
         self._add_row(cells[0], cells[1:])
 
-        # todo:异常处理
-        # def report_invalid_syntax(self, row, error, level='ERROR'):
-        #     msg = _ERR % (self._source, self._name, row, error)
-        #     self._syslog.write(msg, level)
-
 
 class SimpleTable(_Table):
-    """"""
+    """一个SimpleTable实例代表一个表格(如variables/settings)"""
+
     def _add_row(self, name, value):
+        """初始化一个SimpleItem实例代表表格中一行数据，并保存到self._data中"""
         item = SimpleItem(name, value, self)
         self._data.append(item)
 
 
 class ComplexTable(_Table):
+    """一个ComplexTable实例代表一个表格(如testcases/keywords)"""
+
     def __init__(self, name, source, data, syslog):
         _Table.__init__(self, name, source, data, syslog)
         self._item = None
 
     def _add_row(self, name, data):
+        """"""
         if name != '':
             self._item = ComplexItem(name, self)
             self._data.append(self._item)
         if self._item is None:
-            raise Exception("No name specified")
-            # todo 异常处理
-            # raise DataError('No name specified')
+            raise DataError('No name specified')
         self._item.add_subitem(data)
 
 
 class _Item:
+    """xxxItem基类"""
+
     def __init__(self, name, parent):
         self.name = name
         self._parent = parent
 
-        # todo：异常处理
-        # def report_invalid_syntax(self, error=None, level='ERROR'):
-        #     if error is None:
-        #         error = utils.get_error_message()
-        #     self._parent.report_invalid_syntax(self._row, error, level)
-
 
 class SimpleItem(_Item):
+    """SimpleItem映射一行数据"""
+
     def __init__(self, name, value, parrent):
         _Item.__init__(self, name, parrent)
         self.value = value
 
 
 class ComplexItem(_Item):
-    """Represents one item in Test Case or Keyword table"""
+    """"""
 
     def __init__(self, name, parrent):
         _Item.__init__(self, name, parrent)
@@ -78,6 +79,7 @@ class ComplexItem(_Item):
         self.keywords = []
 
     def add_subitem(self, data):
+        """"""
         if len(data) == 0:
             return
         name = data[0]
