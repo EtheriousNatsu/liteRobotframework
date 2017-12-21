@@ -17,6 +17,7 @@ _is_url_re = re.compile('^\w{2,}://')
 
 
 def is_url(string):
+    """判断是否是url"""
     return _is_url_re.search(string) is not None
 
 

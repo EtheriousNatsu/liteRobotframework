@@ -29,6 +29,7 @@ class _Table:
 
 
 class SimpleTable(_Table):
+    """"""
     def _add_row(self, name, value):
         item = SimpleItem(name, value, self)
         self._data.append(item)

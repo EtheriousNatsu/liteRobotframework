@@ -14,12 +14,13 @@ from robot import utils
 from rawdata import RawData
 from userkeyword import UserHandler
 from keywords import KeywordList
+from robot.errors import DataError
 
 
 def TestSuiteData(datasources, settings, syslog):
-    datasources = [utils.normpath(path) for path in datasources]
-    # if len(datasources) == 0:
-    #     raise DataError("No Robot data sources given.")
+    """"""
+    if len(datasources) == 0:
+        raise DataError("No Robot data sources given.")
     # elif len(datasources) > 1:
     #     return MultiSourceSuite(datasources, settings['SuiteNames'], syslog)
     # elif os.path.isdir(datasources[0]):
@@ -58,6 +59,8 @@ class _BaseSuite:
 
 
 class FileSuite(_BaseSuite):
+    """一个FileSuite实例表示一个测试套件，对应一个xx.tsv/xx.robot"""
+
     def __init__(self, path, syslog):
         syslog.info("Parsing test case file '%s'" % path)
         rawdata = self._get_rawdata(path, syslog)
@@ -65,12 +68,11 @@ class FileSuite(_BaseSuite):
         self.tests = self._process_testcases(rawdata, syslog)
 
     def _get_rawdata(self, path, syslog):
+        """获取文件内存模型"""
         rawdata = RawData(path, syslog)
         if rawdata.get_type() == rawdata.TESTCASE:
             return rawdata
-        # todo:异常处理
-        # raise DataError("Test case file '%s' contains no test cases." % path)
-        raise Exception("Test case file '%s' contains no test cases." % path)
+        raise DataError("Test case file '%s' contains no test cases." % path)
 
     def _get_source(self, path):
         return path

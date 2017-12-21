@@ -9,11 +9,14 @@
 @contact: zhouqiang847@gmail.com
 """
 
-import re, os
-from robot.parsing.rawdatatables import SimpleTable, ComplexTable
-from robot import utils
+import re
+import os
 import urllib
+
+from ..parsing.rawdatatables import SimpleTable, ComplexTable
+from .. import utils
 from TsvReader import TsvReader
+from robot.errors import DataError
 
 # Recognized table names
 SETTING_TABLES = ['Setting', 'Settings', 'Metadata']
@@ -26,27 +29,20 @@ _WHITESPACE_REGEXP = re.compile('\s+')
 
 
 def RawData(path, syslog, strip_comments=True):
+    """读取文件内容，内存建模"""
     if path is None or os.path.isdir(path):
         return EmptyRawData(path)
-    try:
-        if utils.is_url(path):
-            datafile = urllib.urlopen(path)
-        else:
-            datafile = open(path, 'rb')
-    except:
-        pass
-        # todo:异常处理
-        # raise DataError(utils.get_error_message())
+    if utils.is_url(path):
+        datafile = urllib.urlopen(path)
+    else:
+        datafile = open(path, 'rb')
     ext = os.path.splitext(path)[1].lower()
     if ext in ['.html', '.xhtml', '.htm']:
         pass
-        # reader = HtmlReader()
     elif ext in ['.tsv']:
         reader = TsvReader()
     else:
-        raise Exception("Unsupported file format '%s'" % ext)
-        # todo:异常处理
-        # raise DataError("Unsupported file format '%s'" % ext)
+        raise DataError("Unsupported file format '%s'" % ext)
     rawdata = TabularRawData(path, syslog, strip_comments)
     reader.read(datafile, rawdata)
     datafile.close()
@@ -54,7 +50,7 @@ def RawData(path, syslog, strip_comments=True):
 
 
 class _BaseRawData:
-    """Represents all unprocessed test data in one target file/directory."""
+    """基类"""
 
     EMPTY = 1
     """No test data found"""
@@ -92,11 +88,12 @@ class _BaseRawData:
 
 
 class EmptyRawData(_BaseRawData):
+    """如果文件不存在，则返回一个空的模型"""
     pass
 
 
 class TabularRawData(_BaseRawData):
-    "Populates RawData from tabular test data"
+    """一个TabularRawData实例代表一个文件的内存模型"""
 
     def __init__(self, path, syslog):
         _BaseRawData.__init__(self, path)
@@ -104,13 +101,15 @@ class TabularRawData(_BaseRawData):
         self._syslog = syslog
 
     def start_table(self, name):
-        """Makes rawdata instance ready to receive new data
+        """接收表格数据前的准备工作，比如
+            *** Variables ***
+            ${GREET}          Hello
+            ${NAME}           world
+            @{USER}           robot 123456
+            &{USER2}          name=robot    password=secret
 
-                This method should be called with table's name before adding table's
-                data with add_row.
-                Returns False if data from specified table will not be processed. Client
-                should thus check the return value of start_table and only call add_row
-                if it receives True.
+           在读取Variables表格数据前，初始化self._table=SimpleTable(*args)，并在实例化的过程中传self.variables。
+           之后交由SimpleTable实例来读取Variables表格数据。
         """
         name = self._process_cell(name)
         table, data = self._get_table_and_data(name)
@@ -133,30 +132,16 @@ class TabularRawData(_BaseRawData):
         return None, None
 
     def add_row(self, cells):
-        """Processes cells from given row.
-
-        Client can use 'repeat' to tell that it has that many similar rows
-        instead of calling add_row that many times.
-        """
+        """添加row"""
         if self._table is not None:
             self._table.add_row(self._process_cells(cells))
 
     def _process_cells(self, cells):
-        """Trims cells and process ${CURDIR}.
-
-        Trimming means collapsing whitespace, removing trailing empty cells and
-        removing comments.
-        """
+        """"""
         temp = []
         for cell in cells:
-            # Remove leading and trailing whitespace and collapse internal
             cell = self._process_cell(cell)
-            # if self._strip_comments and cell.startswith('#'):
-            #     break
-            # if PROCESS_CURDIR:
-            #     cell = cell.replace('${CURDIR}', self._curdir)
             temp.append(cell)
-        # Strip trailing empty cells
         for i in range(len(temp), 0, -1):
             if temp[i - 1] != '':
                 break
@@ -165,4 +150,8 @@ class TabularRawData(_BaseRawData):
         return temp
 
     def _process_cell(self, cell):
+        """
+            1、把cell中任意空白字符用' ' 代替
+            2、移除cell头尾空格
+        """
         return _WHITESPACE_REGEXP.sub(' ', cell).strip()
