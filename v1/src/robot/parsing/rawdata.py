@@ -70,14 +70,22 @@ class _BaseRawData:
         self._type = None
 
     def is_empty(self):
+        """如果该文件内存模型的类型为EMPTY，返回True"""
         return self.get_type() == self.EMPTY
 
     def get_type(self):
+        """返回该文件内存模型的类型"""
         if self._type is None:
             self._type = self._get_type()
         return self._type
 
     def _get_type(self):
+        """
+            1、如果该文件的内存模型包含测试用例，则返回4，表示该内存模型是测试用例
+            2、
+            3、
+            4、
+        """
         if len(self.testcases) > 0:
             return self.TESTCASE
         if len(self.settings) + len(self.variables) + len(self.keywords) == 0:

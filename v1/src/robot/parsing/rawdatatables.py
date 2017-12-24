@@ -45,7 +45,7 @@ class ComplexTable(_Table):
         self._item = None
 
     def _add_row(self, name, data):
-        """"""
+        """初始化一个ComplexItem实例代表表格中一个测试用例(关键字)， 并保存到self._data中"""
         if name != '':
             self._item = ComplexItem(name, self)
             self._data.append(self._item)
@@ -71,15 +71,25 @@ class SimpleItem(_Item):
 
 
 class ComplexItem(_Item):
-    """"""
+    """ComplexItem映射一个测试用例/一个用户关键字"""
 
     def __init__(self, name, parrent):
+        """如下:
+                *** Test Cases ***
+                scalar_variables
+                    [Documentation]    test documentation
+                    [Tags]    test_tags
+                    Log    ${GREET}
+                    Log    ${GREET}, ${NAME}!!
+            metadata:   列表，里面每个元素代表该测试用例的配置，[Documentation]、[Tags]等
+            keywords:   列表，里面每个元素代表该测试用例的一条执行语句
+        """
         _Item.__init__(self, name, parrent)
         self.metadata = []
         self.keywords = []
 
     def add_subitem(self, data):
-        """"""
+        """填充metadata/keywords"""
         if len(data) == 0:
             return
         name = data[0]
