@@ -13,8 +13,8 @@ import re
 import os
 import urllib
 
-from ..parsing.rawdatatables import SimpleTable, ComplexTable
-from .. import utils
+from rawdatatables import SimpleTable, ComplexTable
+from robot import utils
 from TsvReader import TsvReader
 from robot.errors import DataError
 
@@ -43,7 +43,7 @@ def RawData(path, syslog, strip_comments=True):
         reader = TsvReader()
     else:
         raise DataError("Unsupported file format '%s'" % ext)
-    rawdata = TabularRawData(path, syslog, strip_comments)
+    rawdata = TabularRawData(path, syslog)
     reader.read(datafile, rawdata)
     datafile.close()
     return rawdata
@@ -81,17 +81,16 @@ class _BaseRawData:
 
     def _get_type(self):
         """
-            1、如果该文件的内存模型包含测试用例，则返回4，表示该内存模型是测试用例
-            2、
-            3、
-            4、
+            1、首先如果该文件内存模型包含测试用例，则返回TESTCASE，表示该文件为测试用例
+            2、然后如果该文件内存模型不包含settings和variables以及keywords，则返回EMPTY
+            3、最后，返回RESOURCE，表示该文件为资源文件，如settings/variables/keywords
         """
         if len(self.testcases) > 0:
             return self.TESTCASE
         if len(self.settings) + len(self.variables) + len(self.keywords) == 0:
             return self.EMPTY
-        if os.path.splitext(os.path.basename(self.source))[0].lower() == '__init__':
-            return self.INITFILE
+        # if os.path.splitext(os.path.basename(self.source))[0].lower() == '__init__':
+        #     return self.INITFILE
         return self.RESOURCE
 
 

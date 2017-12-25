@@ -12,7 +12,7 @@
 from metadata import TestSuiteMetadata, TestCaseMetadata
 from robot import utils
 from rawdata import RawData
-from userkeyword import UserHandler
+# from userkeyword import UserHandler
 from keywords import KeywordList
 from robot.errors import DataError
 
@@ -31,6 +31,8 @@ def TestSuiteData(datasources, settings, syslog):
 
 
 class _BaseSuite:
+    """测试套件基类"""
+
     def __init__(self, rawdata):
         name, source = self._get_name_and_source(rawdata.source)
         self.name = name
@@ -47,7 +49,7 @@ class _BaseSuite:
         self.metadata = metadata.user_metadata
         self.imports = metadata.imports
         self.variables = rawdata.variables
-        self.user_keywords = UserHandler(rawdata.keywords)
+        # self.user_keywords = UserHandler(rawdata.keywords)
         self.tests = None  # testcases
 
     def _get_name_and_source(self, path):
@@ -106,3 +108,10 @@ class TestCase:
         self.teardown = metadata['Teardown']
         self.timeout = metadata['Timeout']
         self.keywords = KeywordList(rawdata.keywords)
+
+
+# todo:最后删除掉
+if __name__ == '__main__':
+    from robot.output.systemLogger import SystemLogger
+
+    TestSuiteData(['/Users/john/Desktop/robotframework-2.0/templates/testcase_template.tsv'], '', SystemLogger())

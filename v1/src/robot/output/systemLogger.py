@@ -22,13 +22,13 @@ class SystemLogger(AbstractLogger):
             self.monitor = CommandLineMonitor()
         else:
             self.monitor = monitor
-            try:
-                self._file_logger = self._get_file_logger("./syslog.txt",
-                                                          "WARN")
-            except:
-                self._file_logger = None
-                self.error("Opening syslog file '%s' failed"
-                           % "./syslog.txt")
+        try:
+            self._file_logger = self._get_file_logger("./syslog.txt",
+                                                      "WARN")
+        except:
+            self._file_logger = None
+            self.error("Opening syslog file '%s' failed"
+                       % "./syslog.txt")
 
     def _get_file_logger(self, path, level):
         if path == 'NONE':

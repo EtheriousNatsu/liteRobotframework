@@ -47,5 +47,10 @@ def format_time(timetuple, daysep='', daytimesep=' ', timesep=':', millissep=Non
     daytimeparts = ['%02d' % t for t in timetuple[:6]]
     day = daysep.join(daytimeparts[:3])
     time_ = timesep.join(daytimeparts[3:6])
-    millis = millissep is not None and '%s%03d' % (millissep, timetuple[6]) or ''
-    return day + daytimesep + time_ + millis
+    return day + daytimesep + time_
+
+
+def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
+    """返回当前格林威治时间戳"""
+    timetuple = time.localtime()[:6]
+    return format_time(timetuple, daysep, daytimesep, timesep, millissep)
