@@ -53,10 +53,15 @@ class _BaseSuite:
         self.tests = None  # testcases
 
     def _get_name_and_source(self, path):
+        """返回一个元祖(name, source)
+        name:   表示测试套件名
+        source: 表示测试套件所对应的文件路径
+        """
         source = self._get_source(path)
         return self._get_name(source), source
 
     def _get_name(self, source):
+        """返回测试套件名"""
         return utils.printable_name_from_path(source)
 
 
@@ -77,6 +82,7 @@ class FileSuite(_BaseSuite):
         raise DataError("Test case file '%s' contains no test cases." % path)
 
     def _get_source(self, path):
+        """返回文件路径"""
         return path
 
     def _process_testcases(self, rawdata, syslog):

@@ -13,6 +13,8 @@ from robot import utils
 
 
 class _Metadata:
+    """XXXMetadata基类"""
+
     def __init__(self, metadata=None):
         self._data = {}
         for name in self._names.values():
@@ -53,17 +55,20 @@ class UserKeywordMetadata(_Metadata):
               'return': 'Return',
               'timeout': 'Timeout'}
 
+
 class TestCaseMetadata(_Metadata):
-    _names =  {'documentation': 'Documentation',
-               'document': 'Documentation',
-               'setup': 'Setup',
-               'precondition': 'Setup',
-               'teardown': 'Teardown',
-               'postcondition': 'Teardown',
-               'tags': 'Tags',
-               'timeout': 'Timeout'}
+    _names = {'documentation': 'Documentation',
+              'document': 'Documentation',
+              'setup': 'Setup',
+              'precondition': 'Setup',
+              'teardown': 'Teardown',
+              'postcondition': 'Teardown',
+              'tags': 'Tags',
+              'timeout': 'Timeout'}
+
 
 class TestSuiteMetadata(_Metadata):
+    """测试套件元数据"""
     _names = {'documentation': 'Documentation',
               'document': 'Documentation',
               'suitesetup': 'Suite Setup',
@@ -86,6 +91,9 @@ class TestSuiteMetadata(_Metadata):
             self._set_rawdata(rawdata)
 
     def _set_rawdata(self, rawdata):
+        """
+
+        """
         for item in rawdata.settings:
             name = item.name.lower()
             if name in ['library', 'resource', 'variables']:

@@ -43,72 +43,14 @@ def get_directory(path):
 
 
 def printable_name_from_path(path):
-    """Create suite name from given path that points to file or directory.
+    """从给定的路径(文件/目录)截取文件名，并返回它.
 
-    Examples:
-        '/tmp/tests.py'         -> 'Tests'
-        '/var/data/my_tests/    -> 'My Tests'
-        'c:\path\my_tests.html' -> 'My Tests'
-        'd:\MY TESTS.HTML'      -> 'MY TESTS'
-        'e:\myTestCases.html    -> 'My Test Cases'
+    例子:
+        '/tmp/tests.py'         -> 'tests'
     """
-    # Get name of the file/dir without leading path and possible extension
+    # 获取文件名/目录名，去掉前导路径和类型名称
     name = os.path.splitext(os.path.basename(os.path.normpath(path)))[0]
-    return printable_name(name, code_style=True)
-
-
-def _isWordBoundary(prev, char, next):
-    if char.isupper():
-        return (prev.islower() or next.islower()) and prev.isalnum()
-    if char.isdigit():
-        return prev.isalpha()
-    return prev.isdigit()
-
-
-def _splitCamelCaseString(string):
-    parts = []
-    current_part = []
-    string = ' ' + string + ' '  # extra spaces make going through string easier
-    for i in range(1, len(string) - 1):
-        # on 1st/last round prev/next is ' ' and char is 1st/last real char
-        prev, char, next = string[i - 1:i + 2]
-        if _isWordBoundary(prev, char, next):
-            parts.append(''.join(current_part))
-            current_part = [char]
-        else:
-            current_part.append(char)
-    parts.append(''.join(current_part))  # append last part
-    return parts
-
-
-def printable_name(string, code_style=False):
-    """Generates and returns printable name from the given string.
-
-    Examples:
-    'simple'           -> 'Simple'
-    'name with spaces' -> 'Name With Spaces'
-    'more   spaces'    -> 'More Spaces'
-    'Cases AND spaces' -> 'Cases AND Spaces'
-    ''                 -> ''
-
-    If 'code_style' is True:
-
-    'mixedCAPSCamel'   -> 'Mixed CAPS Camel'
-    'camelCaseName'    -> 'Camel Case Name'
-    'under_score_name' -> 'Under Score Name'
-    'under_and space'  -> 'Under And Space'
-    'miXed_CAPS_nAMe'  -> 'MiXed CAPS NAMe'
-    ''                 -> ''
-    """
-    if code_style:
-        string = string.replace('_', ' ')
-    parts = string.split()
-    if len(parts) == 0:
-        return ''
-    elif len(parts) == 1 and code_style:
-        parts = _splitCamelCaseString(parts[0])
-    parts = [part[0].upper() + part[1:] for part in parts if part != '']
-    return ' '.join(parts)
+    return name
 
 
 def get_temp_dir(extrapath=None):
