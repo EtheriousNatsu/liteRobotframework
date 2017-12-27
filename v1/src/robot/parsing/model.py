@@ -46,8 +46,6 @@ class _BaseSuite:
         self.default_tags = metadata['DefaultTags']
         self.force_tags = metadata['ForceTags']
         self.test_timeout = metadata['TestTimeout']
-        self.metadata = metadata.user_metadata
-        self.imports = metadata.imports
         self.variables = rawdata.variables
         # self.user_keywords = UserHandler(rawdata.keywords)
         self.tests = None  # testcases
@@ -86,6 +84,7 @@ class FileSuite(_BaseSuite):
         return path
 
     def _process_testcases(self, rawdata, syslog):
+        """循环遍历`rawdata.testcases`，每一个`rawtest`创建`TestCase`实例，并保存到列表中，最后返回该列表"""
         names = []
         tests = []
         for rawtest in rawdata.testcases:

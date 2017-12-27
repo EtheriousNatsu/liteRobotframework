@@ -24,6 +24,7 @@ class _Metadata:
                 self.set(item)
 
     def set(self, item):
+        """根据`item`填充`self._data`"""
         try:
             name = self._names[utils.normalize(item.name)].replace(' ', '')
         except KeyError:
@@ -37,6 +38,7 @@ class _Metadata:
                 self._data[name].extend(item.value)
 
     def get(self, key, default=None):
+        """根据key从self._data中取对应的value"""
         value = self._data[key]
         if value is None:
             return default
@@ -57,6 +59,7 @@ class UserKeywordMetadata(_Metadata):
 
 
 class TestCaseMetadata(_Metadata):
+    """测试用例元数据"""
     _names = {'documentation': 'Documentation',
               'document': 'Documentation',
               'setup': 'Setup',
@@ -85,22 +88,25 @@ class TestSuiteMetadata(_Metadata):
 
     def __init__(self, rawdata=None):
         _Metadata.__init__(self)
-        self.user_metadata = {}
-        self.imports = []
         if rawdata is not None:
             self._set_rawdata(rawdata)
 
     def _set_rawdata(self, rawdata):
-        """
+        """把`rowdata`中`settings`的数据填充到`TestSuiteMetadata`。如下:
 
+           *** Settings ***
+            Documentation     suite
+            Force Tags        force tags
+            Default Tags      default tags
+            Test Timeout      10 seconds
+
+            1、把每一行数据按`key=value`形式存到self._data中
         """
         for item in rawdata.settings:
             name = item.name.lower()
             if name in ['library', 'resource', 'variables']:
-                self.imports.append(ImportSetting(item))
-            elif name.startswith('meta:'):
                 pass
-                # self._set_user_metadata(item.name[5:].strip(), item.value)
+                # self.imports.append(ImportSetting(item))
             else:
                 self.set(item)
 
