@@ -10,7 +10,7 @@ from robot.common.keyword import BaseKeyword
 
 
 def KeywordFactory(kwdata):
-    """"""
+    """根据`kwdata`的类型生产对应的运行时关键字"""
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
 
