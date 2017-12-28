@@ -9,41 +9,18 @@
 @contact: zhouqiang847@gmail.com
 """
 
-
-
 from robot.common.keyword import BaseKeyword
 
 
 def KeywordList(rawkeywords):
+    """遍历rawkeywords，生成一个关键字列表"""
     keywords = []
-    # block = None
     for row in rawkeywords:
-        # if len(row) == 0:
-        #     continue
-        # if block is not None and row[0] == '':
-        #     block.add_row(row[1:])
-        # else:
-        #     try:
-        #         kw = block = BlockKeywordFactory(row)
-        #     except TypeError:
-        #         kw = KeywordFactory(row)
-        #         block = None
         kw = KeywordFactory(row)
         keywords.append(kw)
     return keywords
 
 
-
 def KeywordFactory(kwdata):
-    # try:
-    #     try:
-    #         return SetKeyword(kwdata)
-    #     except TypeError:
-    #         pass
-    #     try:
-    #         return RepeatKeyword(kwdata)
-    #     except TypeError:
-    #         pass
-    # except:
-    #     return SyntaxErrorKeyword(kwdata, utils.get_error_message())
+    """初始化BaseKeyword实例"""
     return BaseKeyword(kwdata[0], kwdata[1:])

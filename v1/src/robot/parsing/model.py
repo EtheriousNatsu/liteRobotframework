@@ -15,6 +15,7 @@ from rawdata import RawData
 # from userkeyword import UserHandler
 from keywords import KeywordList
 from robot.errors import DataError
+from robot.common.model import BaseTestCase
 
 
 def TestSuiteData(datasources, settings, syslog):
@@ -84,7 +85,7 @@ class FileSuite(_BaseSuite):
         return path
 
     def _process_testcases(self, rawdata, syslog):
-        """循环遍历`rawdata.testcases`，每一个`rawtest`创建`TestCase`实例，并保存到列表中，最后返回该列表"""
+        """遍历`rawdata.testcases`，创建TestCase实例"""
         names = []
         tests = []
         for rawtest in rawdata.testcases:
@@ -103,9 +104,11 @@ class FileSuite(_BaseSuite):
         return tests
 
 
-class TestCase:
+class TestCase(BaseTestCase):
+    """一个TestCase实例代表一个测试用例"""
+
     def __init__(self, rawdata):
-        self.name = utils.printable_name(rawdata.name)
+        super(TestCase, self).__init__(rawdata.name)
         metadata = TestCaseMetadata(rawdata.metadata)
         self.doc = metadata['Documentation']
         self.tags = metadata['Tags']
