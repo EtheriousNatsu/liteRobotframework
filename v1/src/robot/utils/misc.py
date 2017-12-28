@@ -22,6 +22,7 @@ def is_url(string):
 
 
 def get_not_none(*args):
+    """循环遍历args，返回第一个不为None的元素"""
     for arg in args:
         if arg is not None:
             return arg

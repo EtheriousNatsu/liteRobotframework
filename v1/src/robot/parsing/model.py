@@ -16,10 +16,11 @@ from rawdata import RawData
 from keywords import KeywordList
 from robot.errors import DataError
 from robot.common.model import BaseTestCase
+from robot.common.model import BaseTestSuite
 
 
 def TestSuiteData(datasources, settings, syslog):
-    """"""
+    """生成测试套件数据"""
     if len(datasources) == 0:
         raise DataError("No Robot data sources given.")
     # elif len(datasources) > 1:
@@ -31,13 +32,12 @@ def TestSuiteData(datasources, settings, syslog):
     return FileSuite(datasources[0], syslog)
 
 
-class _BaseSuite:
-    """测试套件基类"""
+class _BaseSuite(BaseTestSuite):
+    """套件基类"""
 
     def __init__(self, rawdata):
         name, source = self._get_name_and_source(rawdata.source)
-        self.name = name
-        self.source = source
+        BaseTestSuite.__init__(self, name, source)
         metadata = TestSuiteMetadata(rawdata)
         self.doc = metadata['Documentation']
         self.suite_setup = metadata['SuiteSetup']
@@ -49,7 +49,6 @@ class _BaseSuite:
         self.test_timeout = metadata['TestTimeout']
         self.variables = rawdata.variables
         # self.user_keywords = UserHandler(rawdata.keywords)
-        self.tests = None  # testcases
 
     def _get_name_and_source(self, path):
         """返回一个元祖(name, source)
@@ -116,10 +115,3 @@ class TestCase(BaseTestCase):
         self.teardown = metadata['Teardown']
         self.timeout = metadata['Timeout']
         self.keywords = KeywordList(rawdata.keywords)
-
-
-# todo:最后删除掉
-if __name__ == '__main__':
-    from robot.output.systemLogger import SystemLogger
-
-    TestSuiteData(['/Users/john/Desktop/robotframework-2.0/templates/testcase_template.tsv'], '', SystemLogger())

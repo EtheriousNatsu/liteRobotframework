@@ -9,25 +9,11 @@
 @contact: zhouqiang847@gmail.com
 """
 
-#  Copyright 2008 Nokia Siemens Networks Oyj
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
-
 from robot import utils
 
 
 def is_var(string):
+    """如果`string`为变量返回True，否则返回False"""
     if not utils.is_str(string):
         return False
     length = len(string)
@@ -36,8 +22,10 @@ def is_var(string):
 
 
 def is_scalar_var(string):
+    """如果`string`为变量且首字符为`$`，返回True，否则False"""
     return is_var(string) and string[0] == '$'
 
 
 def is_list_var(string):
+    """如果`string`为变量且首字符为`@`，返回True，否则False"""
     return is_var(string) and string[0] == '@'
