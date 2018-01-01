@@ -16,7 +16,7 @@ def KeywordFactory(kwdata):
 
 
 class Keyword(BaseKeyword):
-    """表示运行时的关键字"""
+    """表示运行时的关键字,每个关键字拥有一个对应的handler"""
 
     def __init__(self, name, args, type='kw'):
         BaseKeyword.__init__(self, name, args, type=type)

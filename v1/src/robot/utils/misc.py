@@ -11,7 +11,20 @@
 
 import os, re
 import tempfile
-import posixpath
+
+from robot.utils import unic
+
+
+def get_doc(obj):
+    """获取obj的说明"""
+    try:
+        doc = obj.__doc__
+    except:
+        doc = ''
+    if doc is None or doc == '':
+        return ''
+    return '\n'.join([line.strip() for line in doc.strip().splitlines()])
+
 
 _is_url_re = re.compile('^\w{2,}://')
 
@@ -69,3 +82,10 @@ def get_temp_dir(extrapath=None):
         if not os.path.exists(tempdir):
             os.mkdir(tempdir)
     return tempdir
+
+
+def seq2str2(sequence):
+    """以`[item1 | item2]`格式返回一个序列"""
+    if not sequence:
+        return '[ ]'
+    return '[ %s ]' % ' | '.join([unic(item) for item in sequence])

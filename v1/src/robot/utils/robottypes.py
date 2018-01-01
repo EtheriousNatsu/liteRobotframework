@@ -31,3 +31,13 @@ def to_list(item):
     if not is_list(item):
         raise Exception('Expected list, tuple or None')
     return list(item)
+
+
+def unic(item):
+    """把item转为unicode"""
+    typ = type(item)
+    if typ is types.UnicodeType:
+        return item
+    if typ is types.StringType:
+        return item.decode('UTF-8', 'ignore')
+    return unicode(item)
