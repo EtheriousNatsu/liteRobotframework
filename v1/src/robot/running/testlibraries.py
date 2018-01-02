@@ -34,6 +34,18 @@ class _BaseTestLibrary(BaseLibrary):
     """XXXLibrary基类"""
 
     def __init__(self, libcode, name, args, syslog):
+        """初始化，以一个类为例子:
+
+            name: 类名
+            args: 类初始化参数
+            _instance_cache: 列表，用来保存xxx？？？？
+            doc: 类描述
+            scope: 类作用域
+            _libcode: 类对象
+            _libinst: 类实例
+            handlers: `NormalizedDict`实例，以key=value形式保存方法
+
+        """
         self.name = name
         self.args = args
         self._instance_cache = []
@@ -46,7 +58,9 @@ class _BaseTestLibrary(BaseLibrary):
             self._init_scope_handling(self.scope)
 
     def _init_scope_handling(self, scope):
-        """"""
+        """
+
+        """
         if scope == 'GLOBAL':
             return
         self._libinst = None
@@ -57,7 +71,9 @@ class _BaseTestLibrary(BaseLibrary):
             self.end_test = self._restoring_end
 
     def _create_handlers(self, syslog):
-        """"""
+        """返回一个`NormalizedDict`实例
+        其中key为方法/函数名，value为`PythonHandler`实例
+        """
         handlers = utils.NormalizedDict(ignore=['_'])
         for name in self._get_handler_names(self._libinst):
             err_pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name)
@@ -94,8 +110,8 @@ class _BaseTestLibrary(BaseLibrary):
         return method
 
     def get_instance(self):
-        """返回`libcode`实例
-        其中的`libcode`可以理解为类。
+        """赋值`_libinst`，并返回它
+        其中的`_libinst`可以理解为类实例。
         """
         try:
             if self._libinst is None:
@@ -105,8 +121,8 @@ class _BaseTestLibrary(BaseLibrary):
         return self._libinst
 
     def _get_instance(self):
-        """实例化`libcode`
-        其中的`libcode`可以理解为类。
+        """返回实例化的`_libcode`
+        其中的`_libcode`可以理解为类对象。
         """
         try:
             return self._libcode(*self.args)
@@ -126,7 +142,6 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _raise_creating_instance_failed(self):
         """当创建类实例失败时，抛出`DataError`异常"""
-        error_msg, error_details = utils.get_error_details()
         msg = "Creating an instance of the test library '%s' " % self.name
         if len(self.args) == 0:
             msg += "with no arguments "
@@ -134,8 +149,7 @@ class _BaseTestLibrary(BaseLibrary):
             msg += "with argument '%s' " % self.args[0]
         else:
             msg += "with arguments %s " % utils.seq2str(self.args)
-        msg += "failed: " + error_msg
-        msg += "\n" + error_details
+        msg += "failed"
         raise DataError(msg)
 
     def start_suite(self):
@@ -149,6 +163,13 @@ class _BaseTestLibrary(BaseLibrary):
 
     def end_test(self):
         pass
+
+    def _caching_start(self):
+        self._instance_cache.append(self._libinst)
+        self._libinst = None
+
+    def _restoring_end(self):
+        self._libinst = self._instance_cache.pop()
 
 
 class ModuleLibrary(_BaseTestLibrary):

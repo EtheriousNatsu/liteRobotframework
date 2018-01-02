@@ -9,10 +9,13 @@
 @contact: zhouqiang847@gmail.com
 """
 
-import os, re
+import os
+import re
 import tempfile
 
 from robot.utils import unic
+from robot.utils import is_str
+from robot.utils import is_list
 
 
 def get_doc(obj):
@@ -82,6 +85,29 @@ def get_temp_dir(extrapath=None):
         if not os.path.exists(tempdir):
             os.mkdir(tempdir)
     return tempdir
+
+
+def seq2str(sequence, quote="'", sep=', ', lastsep=' and ', quote_all=False):
+    """以'item 1', 'item 2' and 'item 3'格式返回一个序列"""
+
+    def elem(string):
+        if not is_str and not quote_all:
+            return unic(string)
+        return quote + unic(string) + quote
+
+    if not is_list(sequence):
+        return elem(sequence)
+    elif len(sequence) == 0:
+        return ''
+    elif len(sequence) == 1:
+        return elem(sequence[0])
+    ret = []
+    for i in range(len(sequence)):
+        if i + 2 == len(sequence):
+            ret.append(elem(sequence[i]) + lastsep + elem(sequence[i + 1]))
+            break
+        ret.append(elem(sequence[i]))
+    return sep.join(ret)
 
 
 def seq2str2(sequence):

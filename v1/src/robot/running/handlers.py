@@ -25,7 +25,6 @@ class _RunnableHandler:
                        self._get_global_handler(handler_method, handler_name) or None
 
     def _get_global_handler(self, method, name):
-        """"""
         return method
 
 
