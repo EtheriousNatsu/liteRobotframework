@@ -122,4 +122,4 @@ class _Misc:
 
 class BuiltIn(_Converter, _Verify, _Misc):
     """对外暴露的内置库"""
-    pass
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'

@@ -15,7 +15,7 @@ from robot.errors import DataError
 
 
 def TestLibrary(name, args=None, syslog=None):
-    """"""
+    """返回一个XXXLibrary实例"""
     if syslog is None:
         syslog = SystemLogger()
     libcode = utils.import_(name)
@@ -38,12 +38,12 @@ class _BaseTestLibrary(BaseLibrary):
 
             name: 类名
             args: 类初始化参数
-            _instance_cache: 列表，用来保存xxx？？？？
+            _instance_cache: 栈，用来暂存`_libinst`
             doc: 类描述
             scope: 类作用域
             _libcode: 类对象
             _libinst: 类实例
-            handlers: `NormalizedDict`实例，以key=value形式保存方法
+            handlers: `NormalizedDict`实例，以key=value形式保存类实例方法
 
         """
         self.name = name
@@ -58,9 +58,7 @@ class _BaseTestLibrary(BaseLibrary):
             self._init_scope_handling(self.scope)
 
     def _init_scope_handling(self, scope):
-        """
-
-        """
+        """作用域初始化"""
         if scope == 'GLOBAL':
             return
         self._libinst = None
@@ -165,11 +163,25 @@ class _BaseTestLibrary(BaseLibrary):
         pass
 
     def _caching_start(self):
+        """把`_libinst`压入栈中，然后把`_libinst`设为None"""
         self._instance_cache.append(self._libinst)
         self._libinst = None
 
     def _restoring_end(self):
+        """弹出栈中最新的一个元素，然后赋值给`_libinst`"""
         self._libinst = self._instance_cache.pop()
+
+    def copy(self, name):
+        """初始化一个`_BaseTestLibrary`实例，然后把当前XXLibrary实例的属性拷贝到它身上"""
+        lib = _BaseTestLibrary(None, name, self.args, None)
+        lib.doc = self.doc
+        lib.scope = self.scope
+        lib._libcode = self._libcode
+        lib._libinst = self._libinst
+        lib.handlers = utils.NormalizedDict(ignore=['_'])
+        for name, handler in self.handlers.items():
+            lib.handlers[name] = handler.copy(lib)
+        return lib
 
 
 class ModuleLibrary(_BaseTestLibrary):
