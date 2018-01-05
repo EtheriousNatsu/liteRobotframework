@@ -9,6 +9,7 @@ import os
 
 from importer import Imported
 from robot import utils
+from robot import running
 
 IMPORTER = Imported()
 
@@ -26,6 +27,7 @@ class Namespace:
         # suite is None only when used internally by copy
         if suite is not None:
             self.import_library('BuiltIn')
+            running.NAMESPACES.start_suite(self)
 
     def import_library(self, name, args=None):
         """导入库，并保存到字典`_testlibs`中，例子:
